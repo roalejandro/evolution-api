@@ -110,6 +110,7 @@ import {
   MediaMessage,
   Options,
   SendAudioDto,
+  SendButtonDto,
   SendContactDto,
   SendListDto,
   SendLocationDto,
@@ -2043,6 +2044,25 @@ export class BaileysStartupService extends ChannelStartupService {
     );
   }
 
+  public async buttonMessage(data: SendButtonDto) {
+    this.logger.verbose('Sending button message');
+    let formattedText = '';
+    for (const item of data.buttonMessage.buttons) {
+      formattedText += `▶️ ${item.buttonText}\n`;
+    }
+
+    formattedText = formattedText.replace(/\n$/, '');
+
+    return await this.sendMessageWithTyping(
+      data.number,
+      {
+        conversation: formattedText,
+      },
+      data?.options,
+      false,
+    );
+  }
+
   public async pollMessage(data: SendPollDto) {
     this.logger.verbose('Sending poll message');
     return await this.sendMessageWithTyping(
@@ -2449,10 +2469,6 @@ export class BaileysStartupService extends ChannelStartupService {
       { presence: 'recording', delay: data?.options?.delay },
       isChatwoot,
     );
-  }
-
-  public async buttonMessage() {
-    throw new BadRequestException('Method not available on WhatsApp Baileys');
   }
 
   public async locationMessage(data: SendLocationDto) {

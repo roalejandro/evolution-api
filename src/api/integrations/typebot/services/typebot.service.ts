@@ -651,24 +651,23 @@ export class TypebotService {
 
       if (input) {
         if (input.type === 'choice input') {
-          let formattedText = '';
-
           const items = input.items;
+          const formattedButton = [];
 
           for (const item of items) {
-            formattedText += `▶️ ${item.content}\n`;
+            formattedButton.push({ buttonText: item.content, buttonId: item.content });
           }
 
-          formattedText = formattedText.replace(/\n$/, '');
-
-          await instance.textMessage({
+          await instance.buttonMessage({
             number: remoteJid.split('@')[0],
             options: {
               delay: instance.localTypebot.delay_message || 1000,
               presence: 'composing',
             },
-            textMessage: {
-              text: formattedText,
+            buttonMessage: {
+              buttons: formattedButton,
+              title: 'Opciones',
+              description: '',
             },
           });
         }
